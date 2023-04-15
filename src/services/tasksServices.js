@@ -2,7 +2,7 @@ const fs = require("fs/promises");
 const path = require("path");
 const crypto = require("crypto");
 
-const db = path.join(process.swd(), "src", "db", "tasks.json");
+const db = path.join(process.cwd(), "src", "db", "tasks.json");
 
 const getTasksService = async () => {
   const rawData = await fs.readFile(db);
