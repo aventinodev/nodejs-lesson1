@@ -1,21 +1,19 @@
-const {
-  getTasksService,
-  getTaskService,
-  createTaskService,
-  updateTaskService,
-  deleteteTaskService,
-} = require("../services/tasksServices");
+const { getTasksService, getTaskService, createTaskService, updateTaskService, deleteteTaskService } = require('../services/tasksServices');
 
-const getTasks = async (req, res, next) => {
+const { catchAsync } = require('../utils/catchAsync');
+
+let getTasks = async (req, res, next) => {
   const tasks = await getTasksService();
   res.status(200).json(tasks);
 };
 
-const getTask = async (req, res, next) => {
-  const { taskId } = res.params;
+getTasks = catchAsync(getTasks);
+
+const getTask = catchAsync(async (req, res, next) => {
+  const { taskId } = req.params;
   const task = await getTaskService(taskId);
   res.status(200).json(task);
-};
+});
 
 const createTask = async (req, res, next) => {
   const createdTask = await createTaskService(req.body);
@@ -36,7 +34,7 @@ const deleteTask = async (req, res, next) => {
 module.exports = {
   getTasks,
   getTask,
-  createTask,
+  createTask: catchAsync(createTask),
   updateTask,
   deleteTask,
 };
