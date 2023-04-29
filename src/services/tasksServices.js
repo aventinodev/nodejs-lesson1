@@ -1,20 +1,13 @@
-const fs = require('fs/promises');
-const path = require('path');
-const crypto = require('crypto');
+const { Task } = require('../models/Task');
 
 const { HttpError } = require('../utils/HttpError');
 
-const db = path.join(process.cwd(), 'src', 'db', 'tasks.json');
-
 const getTasksService = async () => {
-  const rawData = await fs.readFile(db);
-  const parcedData = JSON.parse(rawData);
-  return parcedData;
+  return await Task.find();
 };
-const getTaskService = async (id) => {
-  const tasks = await getTasksService();
 
-  const task = tasks.find((task) => String(id) === String(task.id));
+const getTaskService = async (id) => {
+  const task = await Task.findById(id);
   if (!task) {
     throw new HttpError(404, 'task not found');
   }
@@ -22,36 +15,23 @@ const getTaskService = async (id) => {
 };
 
 const createTaskService = async (body) => {
-  const tasks = await getTasksService();
-
-  const newTask = {
-    id: crypto.randomUUID(),
-    title: body.title,
-    completed: body.completed,
-  };
-
-  tasks.push(newTask);
-
-  await fs.writeFile(db, JSON.stringify(tasks, null, 2));
+  const newTask = await Task.create(body);
   return newTask;
 };
 
 const updateTaskService = async (id, body) => {
-  const tasks = await getTasksService();
-  const task = tasks.find((task) => String(id) === String(task.id));
-
-  task.title = body.title;
-  task.completed = body.completed;
-
-  await fs.writeFile(db, JSON.stringify(tasks, null, 2));
-  return task;
+  const updatedTask = await Task.findByIdAndUpdate(id, body, { new: true });
+  if (!updatedTask) {
+    throw new HttpError(404, 'task not found');
+  }
+  return updatedTask;
 };
 
 const deleteteTaskService = async (id) => {
-  const tasks = await getTasksService();
-  const filteredTask = tasks.filter((task) => String(id) !== String(task.id));
-
-  await fs.writeFile(db, JSON.stringify(filteredTask, null, 2));
+  const deletetedTask = await Task.findByIdAndDelete(id);
+  if (!deletetedTask) {
+    throw new HttpError(404, 'task not found');
+  }
   return id;
 };
 
