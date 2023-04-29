@@ -1,6 +1,9 @@
 const fs = require("fs/promises");
 const path = require("path");
 const crypto = require("crypto");
+const { request } = require("http");
+
+const { HttpError } = require("../utils/HttpError");
 
 const db = path.join(process.cwd(), "src", "db", "tasks.json");
 
@@ -14,7 +17,7 @@ const getTaskService = async (id) => {
 
   const task = tasks.find((task) => String(id) === String(task.id));
   if (!task) {
-    throw new Error("task not found");
+    throw new HttpError(404, "task not found");
   }
   return task;
 };

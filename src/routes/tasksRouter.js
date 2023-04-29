@@ -1,5 +1,6 @@
 const { Router } = require("express");
 
+const { catchAsync } = require("../utils/catchAsync");
 const {
   createTaskSchema,
   updateTaskValidationSchema,
@@ -25,6 +26,6 @@ router
   .route("/:taskId")
   .get(getTask)
   .patch(validateBody(updateTaskValidationSchema), updateTask)
-  .delete(deleteTask);
+  .delete(catchAsync(deleteTask)); /*4 var -  не дуже */
 
 module.exports = { tasksRouter: router };
