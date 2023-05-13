@@ -10,9 +10,7 @@ let signup = async (req, res, next) => {
 };
 signup = catchAsync(signup);
 
-let login = async (req, res, next) => {
-  // await
-};
+let login = async (req, res, next) => {};
 login = catchAsync(login);
 
 let logout = async (req, res, next) => {
